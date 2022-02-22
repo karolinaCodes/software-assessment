@@ -19,6 +19,7 @@
   "homepage": "https://github.com/karolinaCodes/software-assessment#readme",
   "dependencies": {
     "csv-parser": "^3.0.0",
+    "neat-csv": "^7.0.0",
     "yargs": "^17.3.1"
   }
 }
