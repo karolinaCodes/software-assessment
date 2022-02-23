@@ -1,4 +1,3 @@
-// const {fetchRows} = require('./helpers.js');
 const fs = require('fs');
 const csv = require('csv-parser');
 const yargs = require('yargs/yargs');
@@ -64,7 +63,6 @@ new Promise((resolve, reject) => {
     const marksForStudent = marks
       .filter(mark => mark.student_id === student.id)
       .map(mark => mark.mark);
-    // console.log(marksForStudent);
 
     // courses
     // get tests from certain student
@@ -87,37 +85,38 @@ new Promise((resolve, reject) => {
         markObj => markObj.student_id === studentId
       );
 
-      // console.log('marksForStudent', marksForStudent);
-
       // all tests for the specific course that passed into ftn
       const testsForCourse = tests.filter(test => {
         return test.course_id === courseId;
       });
 
+      const studentsMarksForCourse = marksForStudent.filter(mark => {
+        return testsForCourse.find(test => test.id === mark.test_id);
+      });
+
+      // console.log('studentsMarksForCourse', studentsMarksForCourse);
       // console.log('testsForCourse', testsForCourse);
 
-      // find mark from marksForStudent that matches the test for the course
-      const courseAvg = testsForCourse.reduce((acc, curr) => {
-        const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
-        console.log(markItem);
-        // console.log(markItem.mark, curr.weight / 100);
-        // console.log(markItem.mark * (curr.weight / 100));
-        return acc + markItem.mark * (curr.weight / 100);
+      const courseAvg = studentsMarksForCourse.reduce((acc, curr) => {
+        // find the test that goes with the students mark
+        const testItem = testsForCourse.find(test => {
+          return test.id === curr.test_id;
+        });
+        console.log('testItem', testItem);
+        console.log('acc', testItem.weight / 100);
+        return acc + curr.mark * (testItem.weight / 100);
       }, 0);
+
+      console.log('courseAvg', courseAvg);
 
       return courseAvg.toFixed(1);
     };
-    // all marks for student
-    // find out which marks belong to which test
-    // ^ find out which test belongs to which course and how much it's worth to calculate the mark and worth towards final mark
 
     // a student is considered to be enrolled in a course if they have taken a least one test for that course
     students.forEach(student => {
-      console.log(coursesForStudent);
       student.courses = [];
 
       // TODO: change order of courses and totalAverage
-
       // add course average for each course
       coursesForStudent.forEach(course => {
         console.log(course.id);
@@ -135,9 +134,7 @@ new Promise((resolve, reject) => {
     });
   });
 
-  console.log(JSON.stringify({students: students}));
-  const data = JSON.stringify({students: students}, null, 1);
-  // write JSON string to a file
+  const data = JSON.stringify({students: students}, null, 2);
   fs.writeFile(outputFile, data, err => {
     if (err) {
       throw err;
