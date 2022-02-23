@@ -8,7 +8,7 @@ const argv = yargs(hideBin(process.argv))
   .usage(
     'You need to pass these following arguments: \n {path-to-courses-file} {path-to-students-file} {path-to-tests-file} {path-to-marks-file} {path-to-output-file}\n Example: “node app.js courses.csv students.csv tests.csv marks.csv output.json”'
   )
-  .demandCommand(5).argv;
+  .demandCommand(1).argv;
 
 const [coursesFile, studentsFile, testsFile, marksFile, outputFile] = argv._;
 
@@ -26,24 +26,25 @@ new Promise((resolve, reject) => {
     })
     .on('end', () => {
       console.log('"courses.csv" parsed');
+
       fs.createReadStream(studentsFile)
         .pipe(csv())
         .on('data', row => {
-          marks.push(row);
+          students.push(row);
         })
         .on('end', () => {
-          console.log('"marks.csv" parsed');
+          console.log('"students.csv" parsed');
           fs.createReadStream(testsFile)
             .pipe(csv())
             .on('data', row => {
-              students.push(row);
+              tests.push(row);
             })
             .on('end', () => {
-              console.log('"students.csv" parsed');
+              console.log('"tests.csv" parsed');
               fs.createReadStream(marksFile)
                 .pipe(csv())
                 .on('data', row => {
-                  tests.push(row);
+                  marks.push(row);
                 })
                 .on('end', () => {
                   console.log('"marks.csv" parsed');
@@ -94,21 +95,23 @@ new Promise((resolve, reject) => {
 
     // console.log('marksForStudent', marksForStudent);
 
+    // all tests for the specific course that passed into ftn
     const testsForCourse = tests.filter(test => {
       return test.course_id === courseId;
     });
 
-    // console.log('testsForCourse', testsForCourse);
+    console.log('testsForCourse', testsForCourse);
 
-    const sum = testsForCourse.reduce((acc, curr) => {
+    // find mark from marksForStudent that matches the test for the course
+    const courseAvg = testsForCourse.reduce((acc, curr) => {
       const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
-      // console.log(markItem);
+      console.log(markItem);
       // console.log(markItem.mark, curr.weight / 100);
       // console.log(markItem.mark * (curr.weight / 100));
       return acc + markItem.mark * (curr.weight / 100);
     }, 0);
 
-    return sum.toFixed(1);
+    return courseAvg.toFixed(1);
   };
   // console.log('sum', courseAvgForStudent('2', '1'));
   // all marks for student
@@ -120,11 +123,23 @@ new Promise((resolve, reject) => {
     console.log(coursesForStudent);
     student.courses = [];
 
+    // TODO: change order of courses and totalAverage
+
+    // add course average for each course
     coursesForStudent.forEach(course => {
+      console.log(course.id);
       // console.log('hi', courseAvgForStudent('1', course.id));
       course.courseAverage = courseAvgForStudent('1', course.id);
       student.courses.push(course);
     });
+
+    // add total average for each student
+    student.totalAverage = (
+      student.courses.reduce((acc, curr) => {
+        console.log(acc + +curr.courseAverage);
+        return acc + +curr.courseAverage;
+      }, 0) / student.courses.length
+    ).toFixed(2);
   });
 
   console.log(JSON.stringify({students: studentsArr}));
@@ -140,3 +155,5 @@ new Promise((resolve, reject) => {
 });
 
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
+
+// node app.js Example2/courses.csv Example2/students.csv Example2/tests.csv Example2/marks.csv output.json
