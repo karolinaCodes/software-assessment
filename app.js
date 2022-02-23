@@ -53,14 +53,80 @@ new Promise((resolve, reject) => {
         });
     });
 }).then(res => {
-  console.log(courses);
+  // student data
+  const studentsArr = students.map(student => {
+    return {id: student.id, name: student.name};
+  });
+
+  // testIds
+  const testsIdsForStudent = marks
+    .filter(mark => mark.student_id === '1')
+    .map(mark => mark.test_id);
+
+  // marks for student
+  const marksForStudent = marks
+    .filter(mark => mark.student_id === '1')
+    .map(mark => mark.mark);
+  console.log(marksForStudent);
+
+  // courses
+  // get tests from certain student
+  // get course_ids from arr
+  // filter out the duplicate courses_id's
+  const courseIdsforStudent = tests
+    .filter(test => testsIdsForStudent.includes(test.id))
+    .map(test => test.course_id)
+    .filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
+
+  const coursesForStudent = courses.filter(course =>
+    courseIdsforStudent.includes(course.id)
+  );
+
+  coursesForStudent.forEach(course => {
+    course.courseAverage;
+  });
+
+  // console.log(JSON.stringify({students: studentsArr}));
+  console.log(coursesForStudent);
+
+  // course average
+  const courseAvgForStudent = (studentId, courseId) => {
+    const marksForStudent = marks.filter(
+      markObj => markObj.student_id === studentId
+    );
+
+    console.log('marksForStudent', marksForStudent);
+    const testsForCourse = tests.filter(test => {
+      return test.course_id === courseId;
+    });
+
+    console.log('testsForCourse', testsForCourse);
+
+    // calc sum- mark / weight
+    const sum = testsForCourse.reduce((acc, curr) => {
+      const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
+      console.log(markItem);
+      console.log(markItem.mark, curr.weight / 100);
+      console.log(markItem.mark * (curr.weight / 100));
+      return acc + markItem.mark * (curr.weight / 100);
+    }, 0);
+
+    // console.log('marksForStudent', marksForStudent);
+    return sum.toFixed(1);
+  };
+  console.log('sum', courseAvgForStudent('2', '1'));
+  // all marks for student
+  // find out which marks belong to which test
+  // ^ find out which test belongs to which course and how much it's worth to calculate the mark and worth towards final mark
+
+  console.log(JSON.stringify({students: studentsArr}));
 });
 
 // myPromise.then(res => {
 //   console.log(res.students[0]);
 //   console.log({students: []});
 // });
-
-// console.log(JSON.stringify({students: [{}, {}]}));
 
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
