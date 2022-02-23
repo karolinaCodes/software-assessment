@@ -54,6 +54,8 @@ new Promise((resolve, reject) => {
     });
 }).then(res => {
   students.forEach(student => {
+    console.log(student.name === 'B' ? student : null);
+
     // all tests a student did
     const testsIdsForStudent = marks
       .filter(mark => mark.student_id === student.id)
@@ -102,36 +104,29 @@ new Promise((resolve, reject) => {
         const testItem = testsForCourse.find(test => {
           return test.id === curr.test_id;
         });
-        console.log('testItem', testItem);
-        console.log('acc', testItem.weight / 100);
+        // console.log('testItem', testItem);
+        // console.log('acc', testItem.weight / 100);
         return acc + curr.mark * (testItem.weight / 100);
       }, 0);
-
-      console.log('courseAvg', courseAvg);
 
       return courseAvg.toFixed(1);
     };
 
     // a student is considered to be enrolled in a course if they have taken a least one test for that course
-    students.forEach(student => {
-      student.courses = [];
-
-      // TODO: change order of courses and totalAverage
-      // add course average for each course
-      coursesForStudent.forEach(course => {
-        console.log(course.id);
-        course.courseAverage = courseAvgForStudent(student.id, course.id);
-        student.courses.push(course);
-      });
-
-      // add total average for each student
-      student.totalAverage = (
-        student.courses.reduce((acc, curr) => {
-          console.log(acc + +curr.courseAverage);
-          return acc + +curr.courseAverage;
-        }, 0) / student.courses.length
-      ).toFixed(2);
+    student.courses = [];
+    // TODO: change order of courses and totalAverage
+    // add course average for each course
+    coursesForStudent.forEach(course => {
+      course.courseAverage = courseAvgForStudent(student.id, course.id);
+      student.courses.push(course);
     });
+
+    // add total average for each student
+    student.totalAverage = (
+      student.courses.reduce((acc, curr) => {
+        return acc + +curr.courseAverage;
+      }, 0) / student.courses.length
+    ).toFixed(2);
   });
 
   const data = JSON.stringify({students: students}, null, 2);
