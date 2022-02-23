@@ -60,7 +60,7 @@ new Promise((resolve, reject) => {
 
   // all tests a student did
   const testsIdsForStudent = marks
-    .filter(mark => mark.student_id === '2')
+    .filter(mark => mark.student_id === '1')
     .map(mark => mark.test_id);
 
   // console.log('testsIdsForStudent', testsIdsForStudent);
@@ -128,7 +128,7 @@ new Promise((resolve, reject) => {
   });
 
   console.log(JSON.stringify({students: studentsArr}));
-  const data = JSON.stringify({students: studentsArr}, null, 4);
+  const data = JSON.stringify({students: studentsArr}, null, 1);
 
   // write JSON string to a file
   fs.writeFile(outputFile, data, err => {
@@ -138,10 +138,5 @@ new Promise((resolve, reject) => {
     console.log('JSON data is saved.');
   });
 });
-
-// myPromise.then(res => {
-//   console.log(res.students[0]);
-//   console.log({students: []});
-// });
 
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
