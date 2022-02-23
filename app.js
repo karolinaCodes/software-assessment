@@ -58,16 +58,18 @@ new Promise((resolve, reject) => {
     return {id: student.id, name: student.name};
   });
 
-  // testIds
+  // all tests a student did
   const testsIdsForStudent = marks
-    .filter(mark => mark.student_id === '1')
+    .filter(mark => mark.student_id === '2')
     .map(mark => mark.test_id);
 
-  // marks for student
+  // console.log('testsIdsForStudent', testsIdsForStudent);
+
+  // all marks for student
   const marksForStudent = marks
     .filter(mark => mark.student_id === '1')
     .map(mark => mark.mark);
-  console.log(marksForStudent);
+  // console.log(marksForStudent);
 
   // courses
   // get tests from certain student
@@ -84,44 +86,57 @@ new Promise((resolve, reject) => {
     courseIdsforStudent.includes(course.id)
   );
 
-  coursesForStudent.forEach(course => {
-    course.courseAverage;
-  });
-
-  // console.log(JSON.stringify({students: studentsArr}));
-  console.log(coursesForStudent);
-
   // course average
   const courseAvgForStudent = (studentId, courseId) => {
     const marksForStudent = marks.filter(
       markObj => markObj.student_id === studentId
     );
 
-    console.log('marksForStudent', marksForStudent);
+    // console.log('marksForStudent', marksForStudent);
+
     const testsForCourse = tests.filter(test => {
       return test.course_id === courseId;
     });
 
-    console.log('testsForCourse', testsForCourse);
+    // console.log('testsForCourse', testsForCourse);
 
-    // calc sum- mark / weight
     const sum = testsForCourse.reduce((acc, curr) => {
       const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
-      console.log(markItem);
-      console.log(markItem.mark, curr.weight / 100);
-      console.log(markItem.mark * (curr.weight / 100));
+      // console.log(markItem);
+      // console.log(markItem.mark, curr.weight / 100);
+      // console.log(markItem.mark * (curr.weight / 100));
       return acc + markItem.mark * (curr.weight / 100);
     }, 0);
 
-    // console.log('marksForStudent', marksForStudent);
     return sum.toFixed(1);
   };
-  console.log('sum', courseAvgForStudent('2', '1'));
+  // console.log('sum', courseAvgForStudent('2', '1'));
   // all marks for student
   // find out which marks belong to which test
   // ^ find out which test belongs to which course and how much it's worth to calculate the mark and worth towards final mark
 
+  // a student is considered to be enrolled in a course if they have taken a least one test for that course
+  studentsArr.forEach(student => {
+    console.log(coursesForStudent);
+    student.courses = [];
+
+    coursesForStudent.forEach(course => {
+      // console.log('hi', courseAvgForStudent('1', course.id));
+      course.courseAverage = courseAvgForStudent('1', course.id);
+      student.courses.push(course);
+    });
+  });
+
   console.log(JSON.stringify({students: studentsArr}));
+  const data = JSON.stringify({students: studentsArr}, null, 4);
+
+  // write JSON string to a file
+  fs.writeFile(outputFile, data, err => {
+    if (err) {
+      throw err;
+    }
+    console.log('JSON data is saved.');
+  });
 });
 
 // myPromise.then(res => {
