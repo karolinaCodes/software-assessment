@@ -54,97 +54,89 @@ new Promise((resolve, reject) => {
         });
     });
 }).then(res => {
-  // student data
-  const studentsArr = students.map(student => {
-    return {id: student.id, name: student.name};
-  });
+  students.forEach(student => {
+    // all tests a student did
+    const testsIdsForStudent = marks
+      .filter(mark => mark.student_id === student.id)
+      .map(mark => mark.test_id);
 
-  // all tests a student did
-  const testsIdsForStudent = marks
-    .filter(mark => mark.student_id === '1')
-    .map(mark => mark.test_id);
+    // all marks for student
+    const marksForStudent = marks
+      .filter(mark => mark.student_id === student.id)
+      .map(mark => mark.mark);
+    // console.log(marksForStudent);
 
-  // console.log('testsIdsForStudent', testsIdsForStudent);
+    // courses
+    // get tests from certain student
+    // get course_ids from arr
+    // filter out the duplicate courses_id's
+    const courseIdsforStudent = tests
+      .filter(test => testsIdsForStudent.includes(test.id))
+      .map(test => test.course_id)
+      .filter((value, index, self) => {
+        return self.indexOf(value) === index;
+      });
 
-  // all marks for student
-  const marksForStudent = marks
-    .filter(mark => mark.student_id === '1')
-    .map(mark => mark.mark);
-  // console.log(marksForStudent);
-
-  // courses
-  // get tests from certain student
-  // get course_ids from arr
-  // filter out the duplicate courses_id's
-  const courseIdsforStudent = tests
-    .filter(test => testsIdsForStudent.includes(test.id))
-    .map(test => test.course_id)
-    .filter((value, index, self) => {
-      return self.indexOf(value) === index;
-    });
-
-  const coursesForStudent = courses.filter(course =>
-    courseIdsforStudent.includes(course.id)
-  );
-
-  // course average
-  const courseAvgForStudent = (studentId, courseId) => {
-    const marksForStudent = marks.filter(
-      markObj => markObj.student_id === studentId
+    const coursesForStudent = courses.filter(course =>
+      courseIdsforStudent.includes(course.id)
     );
 
-    // console.log('marksForStudent', marksForStudent);
+    // course average
+    const courseAvgForStudent = (studentId, courseId) => {
+      const marksForStudent = marks.filter(
+        markObj => markObj.student_id === studentId
+      );
 
-    // all tests for the specific course that passed into ftn
-    const testsForCourse = tests.filter(test => {
-      return test.course_id === courseId;
+      // console.log('marksForStudent', marksForStudent);
+
+      // all tests for the specific course that passed into ftn
+      const testsForCourse = tests.filter(test => {
+        return test.course_id === courseId;
+      });
+
+      // console.log('testsForCourse', testsForCourse);
+
+      // find mark from marksForStudent that matches the test for the course
+      const courseAvg = testsForCourse.reduce((acc, curr) => {
+        const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
+        console.log(markItem);
+        // console.log(markItem.mark, curr.weight / 100);
+        // console.log(markItem.mark * (curr.weight / 100));
+        return acc + markItem.mark * (curr.weight / 100);
+      }, 0);
+
+      return courseAvg.toFixed(1);
+    };
+    // all marks for student
+    // find out which marks belong to which test
+    // ^ find out which test belongs to which course and how much it's worth to calculate the mark and worth towards final mark
+
+    // a student is considered to be enrolled in a course if they have taken a least one test for that course
+    students.forEach(student => {
+      console.log(coursesForStudent);
+      student.courses = [];
+
+      // TODO: change order of courses and totalAverage
+
+      // add course average for each course
+      coursesForStudent.forEach(course => {
+        console.log(course.id);
+        course.courseAverage = courseAvgForStudent(student.id, course.id);
+        student.courses.push(course);
+      });
+
+      // add total average for each student
+      student.totalAverage = (
+        student.courses.reduce((acc, curr) => {
+          console.log(acc + +curr.courseAverage);
+          return acc + +curr.courseAverage;
+        }, 0) / student.courses.length
+      ).toFixed(2);
     });
-
-    console.log('testsForCourse', testsForCourse);
-
-    // find mark from marksForStudent that matches the test for the course
-    const courseAvg = testsForCourse.reduce((acc, curr) => {
-      const markItem = marksForStudent.find(mark => mark.test_id === curr.id);
-      console.log(markItem);
-      // console.log(markItem.mark, curr.weight / 100);
-      // console.log(markItem.mark * (curr.weight / 100));
-      return acc + markItem.mark * (curr.weight / 100);
-    }, 0);
-
-    return courseAvg.toFixed(1);
-  };
-  // console.log('sum', courseAvgForStudent('2', '1'));
-  // all marks for student
-  // find out which marks belong to which test
-  // ^ find out which test belongs to which course and how much it's worth to calculate the mark and worth towards final mark
-
-  // a student is considered to be enrolled in a course if they have taken a least one test for that course
-  studentsArr.forEach(student => {
-    console.log(coursesForStudent);
-    student.courses = [];
-
-    // TODO: change order of courses and totalAverage
-
-    // add course average for each course
-    coursesForStudent.forEach(course => {
-      console.log(course.id);
-      // console.log('hi', courseAvgForStudent('1', course.id));
-      course.courseAverage = courseAvgForStudent('1', course.id);
-      student.courses.push(course);
-    });
-
-    // add total average for each student
-    student.totalAverage = (
-      student.courses.reduce((acc, curr) => {
-        console.log(acc + +curr.courseAverage);
-        return acc + +curr.courseAverage;
-      }, 0) / student.courses.length
-    ).toFixed(2);
   });
 
-  console.log(JSON.stringify({students: studentsArr}));
-  const data = JSON.stringify({students: studentsArr}, null, 1);
-
+  console.log(JSON.stringify({students: students}));
+  const data = JSON.stringify({students: students}, null, 1);
   // write JSON string to a file
   fs.writeFile(outputFile, data, err => {
     if (err) {
