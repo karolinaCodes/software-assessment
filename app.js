@@ -1,4 +1,9 @@
-const {emptyObject, deepClone, courseAvgForStudent} = require('./helpers');
+const {
+  emptyObject,
+  deepClone,
+  calcCourseAvg,
+  calcTotalAverage,
+} = require('./helpers');
 const fs = require('fs');
 const csv = require('csv-parser');
 const yargs = require('yargs/yargs');
@@ -88,24 +93,16 @@ new Promise((resolve, reject) => {
     student.courses = [];
     // TODO: change order of courses and totalAverage
     coursesForStudent.forEach(course => {
-      course.courseAverage = courseAvgForStudent(
-        student.id,
-        course.id,
-        marks,
-        tests
-      );
+      course.courseAverage = calcCourseAvg(student.id, course.id, marks, tests);
       student.courses.push(course);
     });
 
-    // add total average for each student
-    student.totalAverage = +(
-      student.courses.reduce((acc, curr) => acc + +curr.courseAverage, 0) /
-      student.courses.length
-    ).toFixed(2);
+    student.totalAverage = calcTotalAverage(student);
 
-    // convert student id to a number type
-    // TODO:- in helper ?
+    // convert student id to a number data type
     student.id = +student.id;
+
+    console.log('student', student);
   });
 
   const data = JSON.stringify({students}, null, 2);

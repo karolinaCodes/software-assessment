@@ -5,7 +5,7 @@ const emptyObject = obj => Object.keys(obj).length === 0;
 const deepClone = array => JSON.parse(JSON.stringify(array));
 
 // course average
-const courseAvgForStudent = (studentId, courseId, marks, tests) => {
+const calcCourseAvg = (studentId, courseId, marks, tests) => {
   const marksForStudent = deepClone(marks).filter(
     markObj => markObj.student_id === studentId
   );
@@ -27,4 +27,10 @@ const courseAvgForStudent = (studentId, courseId, marks, tests) => {
   return +courseAvg.toFixed(2);
 };
 
-module.exports = {emptyObject, deepClone, courseAvgForStudent};
+const calcTotalAverage = student =>
+  +(
+    student.courses.reduce((acc, curr) => acc + +curr.courseAverage, 0) /
+    student.courses.length
+  ).toFixed(2);
+
+module.exports = {emptyObject, deepClone, calcCourseAvg, calcTotalAverage};

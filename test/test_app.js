@@ -1,5 +1,3 @@
-const chai = require('chai');
-const assert = chai.assert;
 const expect = require('chai').expect;
 const fs = require('fs');
 
@@ -43,7 +41,7 @@ describe('Report card CLI app', () => {
     expect(areNumbers).to.equal(true);
   });
 
-  it('grades are rounded to two digits', () => {
+  it('should round grades to two digits', () => {
     const rounded = parsedData.students.every(
       student =>
         String(student.totalAverage).split('.').length <= 2 &&
