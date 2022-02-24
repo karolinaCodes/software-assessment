@@ -1,5 +1,5 @@
-const fs = require('fs');
 const {emptyObject, deepClone, courseAvgForStudent} = require('./helpers');
+const fs = require('fs');
 const csv = require('csv-parser');
 const yargs = require('yargs/yargs');
 const {hideBin} = require('yargs/helpers');
@@ -59,11 +59,6 @@ new Promise((resolve, reject) => {
         });
     });
 }).then(() => {
-  console.log('students', students);
-  console.log('tests', tests);
-  console.log('courses', courses);
-  console.log('marks', marks);
-
   // for each student: create an object with student info and an array of courses and then each course average and finally totalAverage of all courses
   students.forEach(student => {
     // all tests a student did
