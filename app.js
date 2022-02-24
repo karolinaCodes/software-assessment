@@ -69,9 +69,7 @@ new Promise((resolve, reject) => {
     const courseIdsforStudent = deepClone(tests)
       .filter(test => testsIdsForStudent.includes(test.id))
       .map(test => test.course_id)
-      .filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
+      .filter((value, index, self) => self.indexOf(value) === index);
 
     const coursesForStudent = deepClone(courses).filter(course =>
       courseIdsforStudent.includes(course.id)
@@ -84,22 +82,19 @@ new Promise((resolve, reject) => {
       );
 
       // all tests for the specific course that passed into ftn
-      const testsForCourse = deepClone(tests).filter(test => {
-        return test.course_id === courseId;
-      });
+      const testsForCourse = deepClone(tests).filter(
+        test => test.course_id === courseId
+      );
 
-      const studentsMarksForCourse = marksForStudent.filter(mark => {
-        return testsForCourse.find(test => test.id === mark.test_id);
-      });
+      const studentsMarksForCourse = marksForStudent.filter(mark =>
+        testsForCourse.find(test => test.id === mark.test_id)
+      );
 
       const courseAvg = studentsMarksForCourse.reduce((acc, curr) => {
         // find the test that goes with the students mark
-        const testItem = testsForCourse.find(test => {
-          return test.id === curr.test_id;
-        });
+        const testItem = testsForCourse.find(test => test.id === curr.test_id);
         return acc + curr.mark * (testItem.weight / 100);
       }, 0);
-
       return courseAvg.toFixed(1);
     };
 
@@ -113,9 +108,8 @@ new Promise((resolve, reject) => {
 
     // add total average for each student
     student.totalAverage = (
-      student.courses.reduce((acc, curr) => {
-        return acc + +curr.courseAverage;
-      }, 0) / student.courses.length
+      student.courses.reduce((acc, curr) => acc + +curr.courseAverage, 0) /
+      student.courses.length
     ).toFixed(2);
   });
 
