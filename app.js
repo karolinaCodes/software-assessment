@@ -19,41 +19,33 @@ new Promise((resolve, reject) => {
   // if error, reject
   fs.createReadStream(coursesFile)
     .pipe(csv())
-    .on('data', row => {
-      courses.push(row);
-    })
+    .on('data', row => courses.push(row))
     .on('end', () => {
       console.log(`"${coursesFile}" file parsed.`);
 
       fs.createReadStream(studentsFile)
         .pipe(csv())
-        .on('data', row => {
-          students.push(row);
-        })
+        .on('data', row => students.push(row))
         .on('end', () => {
           console.log(`"${studentsFile}" file parsed.`);
 
           fs.createReadStream(testsFile)
             .pipe(csv())
-            .on('data', row => {
-              tests.push(row);
-            })
+            .on('data', row => tests.push(row))
             .on('end', () => {
               console.log(`"${testsFile}" file parsed.`);
 
               fs.createReadStream(marksFile)
                 .pipe(csv())
-                .on('data', row => {
-                  marks.push(row);
-                })
+                .on('data', row => marks.push(row))
                 .on('end', () => {
                   console.log(`"${marksFile}" file parsed.`);
-                  resolve('done');
+                  resolve();
                 });
             });
         });
     });
-}).then(res => {
+}).then(() => {
   students.forEach(student => {
     // all tests a student did
     const testsIdsForStudent = marks
