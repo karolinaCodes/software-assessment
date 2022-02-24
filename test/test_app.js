@@ -25,20 +25,33 @@ describe('Report card CLI app', () => {
     expect(studentIds).to.deep.equal(sortedstudentIds);
   });
 
-  it('data type for students ids is number', () => {
-    const studentIds = parsedData.students.map(student => student.id);
-    const areNumbers = studentIds.every(
-      studentId => typeof studentId === 'number'
+  it('data type for students ids is "number"', () => {
+    const areNumbers = parsedData.students.every(
+      student => typeof student.id === 'number'
     );
     expect(areNumbers).to.equal(true);
   });
 
-  it('data type for grades is number', () => {
-    const studentIds = parsedData.students.map(student => student.id);
-    const areNumbers = studentIds.every(
-      studentId => typeof studentId === 'number'
+  it('data type for grades is "number"', () => {
+    const areNumbers = parsedData.students.every(
+      student =>
+        typeof student.totalAverage === 'number' &&
+        student.courses.every(
+          course => typeof course.courseAverage === 'number'
+        )
     );
     expect(areNumbers).to.equal(true);
+  });
+
+  it('grades are rounded to two digits', () => {
+    const rounded = parsedData.students.every(
+      student =>
+        String(student.totalAverage).split('.').length <= 2 &&
+        student.courses.every(
+          course => String(course.courseAverage).split('.').length <= 2
+        )
+    );
+    expect(rounded).to.equal(true);
   });
 });
 

@@ -24,7 +24,7 @@ const courseAvgForStudent = (studentId, courseId, marks, tests) => {
     const testItem = testsForCourse.find(test => test.id === curr.test_id);
     return acc + curr.mark * (testItem.weight / 100);
   }, 0);
-  return +courseAvg.toFixed(1);
+  return +courseAvg.toFixed(2);
 };
 
 module.exports = {emptyObject, deepClone, courseAvgForStudent};
