@@ -46,14 +46,19 @@ new Promise((resolve, reject) => {
         });
     });
 }).then(() => {
+  // create deep clone array of objects- so don't have unwanted bugs when use array methods to create new array from array of objects
+  const deepClone = array => JSON.parse(JSON.stringify(array));
+
+  // for each student: create an object with student info and an array of courses and then each course average and finally totalAverage of all courses
+
   students.forEach(student => {
     // all tests a student did
-    const testsIdsForStudent = marks
+    const testsIdsForStudent = deepClone(marks)
       .filter(mark => mark.student_id === student.id)
       .map(mark => mark.test_id);
 
     // all marks for student
-    const marksForStudent = marks
+    const marksForStudent = deepClone(marks)
       .filter(mark => mark.student_id === student.id)
       .map(mark => mark.mark);
 
@@ -61,15 +66,12 @@ new Promise((resolve, reject) => {
     // get tests from certain student
     // get course_ids from arr
     // filter out the duplicate courses_id's
-    const courseIdsforStudent = tests
+    const courseIdsforStudent = deepClone(tests)
       .filter(test => testsIdsForStudent.includes(test.id))
       .map(test => test.course_id)
       .filter((value, index, self) => {
         return self.indexOf(value) === index;
       });
-
-    // deep clone array of objects- so don't have unwanted bugs when use array methods to create new array from array of objects
-    const deepClone = array => JSON.parse(JSON.stringify(array));
 
     const coursesForStudent = deepClone(courses).filter(course =>
       courseIdsforStudent.includes(course.id)
@@ -77,12 +79,12 @@ new Promise((resolve, reject) => {
 
     // course average
     const courseAvgForStudent = (studentId, courseId) => {
-      const marksForStudent = marks.filter(
+      const marksForStudent = deepClone(marks).filter(
         markObj => markObj.student_id === studentId
       );
 
       // all tests for the specific course that passed into ftn
-      const testsForCourse = tests.filter(test => {
+      const testsForCourse = deepClone(tests).filter(test => {
         return test.course_id === courseId;
       });
 
@@ -90,41 +92,24 @@ new Promise((resolve, reject) => {
         return testsForCourse.find(test => test.id === mark.test_id);
       });
 
-      // console.log('studentsMarksForCourse', studentsMarksForCourse);
-      // console.log('testsForCourse', testsForCourse);
-
       const courseAvg = studentsMarksForCourse.reduce((acc, curr) => {
         // find the test that goes with the students mark
         const testItem = testsForCourse.find(test => {
           return test.id === curr.test_id;
         });
-        // console.log('testItem', testItem);
-        // console.log('acc', testItem.weight / 100);
         return acc + curr.mark * (testItem.weight / 100);
       }, 0);
-
-      // console.log('courses', courses);
 
       return courseAvg.toFixed(1);
     };
 
     // a student is considered to be enrolled in a course if they have taken a least one test for that course
-    // console.log('student.courses ', student.courses);
     student.courses = [];
     // TODO: change order of courses and totalAverage
-    // add course average for each course
-    // eror here
-    // console.log('coursesbefore', courses);
-    // console.log('coursesForStudent', coursesForStudent);
     coursesForStudent.forEach(course => {
-      // create a copy so don't mutate original courses array for the next student
-      // making a change to course in coursesForStudent makes a change to courses array
       course.courseAverage = courseAvgForStudent(student.id, course.id);
       student.courses.push(course);
-      // console.log('coursesinside', courses);
     });
-
-    // console.log('student.courses', student.courses);
 
     // add total average for each student
     student.totalAverage = (
@@ -132,18 +117,9 @@ new Promise((resolve, reject) => {
         return acc + +curr.courseAverage;
       }, 0) / student.courses.length
     ).toFixed(2);
-
-    // console.log('courses2', courses);
-
-    // console.log(
-    //   'here',
-    //   students.forEach(student => console.log(student.name, student.courses))
-    // );
   });
 
-  // students.forEach(student => console.log(student.courses));
-
-  const data = JSON.stringify({students: students}, null, 2);
+  const data = JSON.stringify({students}, null, 2);
   fs.writeFile(outputFile, data, err => {
     if (err) {
       throw err;
