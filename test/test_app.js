@@ -1,13 +1,21 @@
-const chai = require('chai'); // 1
+const chai = require('chai');
 const assert = chai.assert;
+const expect = require('chai').expect;
+const fs = require('fs');
 
-const shouldBuyCar = require('../shouldBuyCar.js'); // 2
+describe('Report card CLI app', () => {
+  it.skip('should return an error message when no arguments are passed to the command line', () => {});
 
-describe('#shouldBuyCar()', function () {
-  // 3
+  it.skip('should return an error message when not enough arguments are passed to the command line', () => {});
 
-  it("should return false if it's a hatchback", function () {
-    // 4
+  it('data should be contained within an object with a “students” key', () => {
+    fs.readFile('output.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      expect(JSON.parse(data)).to.have.property('students');
+    });
   });
 });
 

@@ -8,7 +8,7 @@ const argv = yargs(hideBin(process.argv))
   .usage(
     'You need to pass these following arguments: \n {path-to-courses-file} {path-to-students-file} {path-to-tests-file} {path-to-marks-file} {path-to-output-file}\n Example: “node app.js courses.csv students.csv tests.csv marks.csv output.json”'
   )
-  .demandCommand(1).argv;
+  .demandCommand(5).argv;
 
 const [coursesFile, studentsFile, testsFile, marksFile, outputFile] = argv._;
 const courses = [];
