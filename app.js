@@ -61,6 +61,10 @@ new Promise((resolve, reject) => {
 }).then(() => {
   // for each student: create an object with student info and an array of courses and then each course average and finally totalAverage of all courses
   students.forEach(student => {
+    // convert student id to a number type
+    // TODO:- in helper ?
+    student.id = +student.id;
+
     // all tests a student did
     const testsIdsForStudent = deepClone(marks)
       .filter(mark => mark.student_id === student.id)
@@ -98,7 +102,7 @@ new Promise((resolve, reject) => {
     });
 
     // add total average for each student
-    student.totalAverage = (
+    student.totalAverage = +(
       student.courses.reduce((acc, curr) => acc + +curr.courseAverage, 0) /
       student.courses.length
     ).toFixed(2);
