@@ -10,7 +10,6 @@ const argv = yargs(hideBin(process.argv))
   .demandCommand(1).argv;
 
 const [coursesFile, studentsFile, testsFile, marksFile, outputFile] = argv._;
-
 const courses = [];
 const marks = [];
 const students = [];
@@ -24,7 +23,7 @@ new Promise((resolve, reject) => {
       courses.push(row);
     })
     .on('end', () => {
-      console.log('"courses.csv" parsed');
+      console.log(`"${coursesFile}" file parsed.`);
 
       fs.createReadStream(studentsFile)
         .pipe(csv())
@@ -32,21 +31,23 @@ new Promise((resolve, reject) => {
           students.push(row);
         })
         .on('end', () => {
-          console.log('"students.csv" parsed');
+          console.log(`"${studentsFile}" file parsed.`);
+
           fs.createReadStream(testsFile)
             .pipe(csv())
             .on('data', row => {
               tests.push(row);
             })
             .on('end', () => {
-              console.log('"tests.csv" parsed');
+              console.log(`"${testsFile}" file parsed.`);
+
               fs.createReadStream(marksFile)
                 .pipe(csv())
                 .on('data', row => {
                   marks.push(row);
                 })
                 .on('end', () => {
-                  console.log('"marks.csv" parsed');
+                  console.log(`"${marksFile}" file parsed.`);
                   resolve('done');
                 });
             });
@@ -54,8 +55,6 @@ new Promise((resolve, reject) => {
     });
 }).then(res => {
   students.forEach(student => {
-    console.log(student.name === 'B' ? student : null);
-
     // all tests a student did
     const testsIdsForStudent = marks
       .filter(mark => mark.student_id === student.id)
@@ -77,7 +76,10 @@ new Promise((resolve, reject) => {
         return self.indexOf(value) === index;
       });
 
-    const coursesForStudent = courses.filter(course =>
+    // deep clone array of objects- so don't have unwanted bugs when use array methods to create new array from array of objects
+    const deepClone = array => JSON.parse(JSON.stringify(array));
+
+    const coursesForStudent = deepClone(courses).filter(course =>
       courseIdsforStudent.includes(course.id)
     );
 
@@ -109,17 +111,28 @@ new Promise((resolve, reject) => {
         return acc + curr.mark * (testItem.weight / 100);
       }, 0);
 
+      // console.log('courses', courses);
+
       return courseAvg.toFixed(1);
     };
 
     // a student is considered to be enrolled in a course if they have taken a least one test for that course
+    // console.log('student.courses ', student.courses);
     student.courses = [];
     // TODO: change order of courses and totalAverage
     // add course average for each course
+    // eror here
+    // console.log('coursesbefore', courses);
+    // console.log('coursesForStudent', coursesForStudent);
     coursesForStudent.forEach(course => {
+      // create a copy so don't mutate original courses array for the next student
+      // making a change to course in coursesForStudent makes a change to courses array
       course.courseAverage = courseAvgForStudent(student.id, course.id);
       student.courses.push(course);
+      // console.log('coursesinside', courses);
     });
+
+    // console.log('student.courses', student.courses);
 
     // add total average for each student
     student.totalAverage = (
@@ -127,7 +140,16 @@ new Promise((resolve, reject) => {
         return acc + +curr.courseAverage;
       }, 0) / student.courses.length
     ).toFixed(2);
+
+    // console.log('courses2', courses);
+
+    // console.log(
+    //   'here',
+    //   students.forEach(student => console.log(student.name, student.courses))
+    // );
   });
+
+  // students.forEach(student => console.log(student.courses));
 
   const data = JSON.stringify({students: students}, null, 2);
   fs.writeFile(outputFile, data, err => {
