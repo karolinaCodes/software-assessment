@@ -33,7 +33,7 @@ describe('deepClone()', () => {
 });
 
 describe('courseAvgForStudent()', () => {
-  it('should return the course average for a student', () => {
+  it('should return student`s course average', () => {
     const marks = [
       {test_id: '1', student_id: '1', mark: '60'},
       {test_id: '2', student_id: '1', mark: '60'},
@@ -70,7 +70,7 @@ describe('courseAvgForStudent()', () => {
 });
 
 describe('calcTotalAverage()', () => {
-  it('should return the total average for a student', () => {
+  it('should return a student`s total average', () => {
     const student = {
       id: 3,
       name: 'Z',

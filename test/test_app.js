@@ -51,6 +51,19 @@ describe('Report card CLI app', () => {
     );
     expect(rounded).to.equal(true);
   });
+
+  it('should return a valid JSON object', () => {
+    const isJsonObject = obj => {
+      try {
+        JSON.parse(JSON.stringify(obj));
+      } catch (e) {
+        return false;
+      }
+      return true;
+    };
+    const result = isJsonObject(parsedData);
+    expect(result).to.equal(true);
+  });
 });
 
 // create files for function or for all functions
