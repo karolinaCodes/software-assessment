@@ -55,10 +55,21 @@ const parseCsvFile = async (filePath, array) => {
   });
 };
 
+const writeJSONFile = (data, filePath) => {
+  data = JSON.stringify({data}, null, 2);
+  fs.writeFile(filePath, data, err => {
+    if (err) {
+      throw err;
+    }
+    console.log('JSON data is saved.');
+  });
+};
+
 module.exports = {
   emptyObject,
   deepClone,
   calcCourseAvg,
   calcTotalAverage,
   parseCsvFile,
+  writeJSONFile,
 };
