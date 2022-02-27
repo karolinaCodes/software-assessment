@@ -1,3 +1,6 @@
+const fs = require('fs');
+const csv = require('csv-parser');
+
 // if the object is empty because the csv parser parsed empty space, don't add to array
 const emptyObject = obj => Object.keys(obj).length === 0;
 
@@ -33,4 +36,29 @@ const calcTotalAverage = student =>
     student.courses.length
   ).toFixed(2);
 
-module.exports = {emptyObject, deepClone, calcCourseAvg, calcTotalAverage};
+// TODO: test this function
+const parseCsvFile = async (filePath, array) => {
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(filePath)
+      .on('error', error => {
+        reject(error);
+      })
+      .pipe(csv())
+      .on('data', row => {
+        if (emptyObject(row)) return;
+        array.push(row);
+      })
+      .on('end', () => {
+        console.log(`"${filePath}" file parsed.`);
+        resolve();
+      });
+  });
+};
+
+module.exports = {
+  emptyObject,
+  deepClone,
+  calcCourseAvg,
+  calcTotalAverage,
+  parseCsvFile,
+};
