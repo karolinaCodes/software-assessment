@@ -8,25 +8,16 @@ const emptyObject = obj => Object.keys(obj).length === 0;
 const deepClone = array => JSON.parse(JSON.stringify(array));
 
 // course average
-const calcCourseAvg = (studentId, courseId, marks, tests) => {
-  const marksForStudent = deepClone(marks).filter(
-    markObj => markObj.student_id === studentId
+const calcCourseAvg = (courseId, testsAndMarksForStudent) => {
+  const testsAndMarksForStudentandCourse = testsAndMarksForStudent.filter(
+    item => item.course_id === courseId
   );
 
-  // all tests for the specific course that passed into ftn
-  const testsForCourse = deepClone(tests).filter(
-    test => test.course_id === courseId
-  );
-
-  const studentsMarksForCourse = marksForStudent.filter(mark =>
-    testsForCourse.find(test => test.id === mark.test_id)
-  );
-
-  const courseAvg = studentsMarksForCourse.reduce((acc, curr) => {
-    // find the test that goes with the students mark
-    const testItem = testsForCourse.find(test => test.id === curr.test_id);
-    return acc + curr.mark * (testItem.weight / 100);
+  // TODO: and order totalaverage and
+  const courseAvg = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
+    return acc + curr.mark * (curr.weight / 100);
   }, 0);
+
   return +courseAvg.toFixed(2);
 };
 
@@ -56,7 +47,7 @@ const parseCsvFile = async (filePath, array) => {
 };
 
 const writeJSONFile = (data, filePath) => {
-  data = JSON.stringify({data}, null, 2);
+  data = JSON.stringify({students: data}, null, 2);
   fs.writeFile(filePath, data, err => {
     if (err) {
       throw err;

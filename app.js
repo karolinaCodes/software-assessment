@@ -36,29 +36,42 @@ Promise.all([
 ]).then(() => {
   // for each student: create an object with student info and an array of courses and then each course average and finally totalAverage of all courses
   students.forEach(student => {
-    // all tests a student did
-    const testsIdsForStudent = deepClone(marks)
-      .filter(mark => mark.student_id === student.id)
-      .map(mark => mark.test_id);
+    // for course average?
+    // use in testIdsForStudent
+    const marksForStudent = deepClone(marks).filter(
+      mark => mark.student_id === student.id
+    );
 
-    // courses
-    // get tests from certain student
-    // get course_ids from arr
-    // filter out the duplicate courses_id's
-    const courseIdsforStudent = deepClone(tests)
-      .filter(test => testsIdsForStudent.includes(test.id))
+    // all tests a student completed
+    const testIdsForStudent = marksForStudent.map(mark => mark.test_id);
+
+    // for course average?
+    const testsForStudent = deepClone(tests).filter(test =>
+      testIdsForStudent.includes(test.id)
+    );
+
+    const testsAndMarksForStudent = testsForStudent.map(test => {
+      // find the mark for the test
+      const testItem = marksForStudent.find(mark => test.id === mark.test_id);
+      test.student_id = testItem.student_id;
+      test.mark = testItem.mark;
+      return test;
+    });
+
+    // get course id's from a student and filter out the duplicate courses_id's
+    const courseIdsForStudent = deepClone(tests)
+      .filter(test => testIdsForStudent.includes(test.id))
       .map(test => test.course_id)
       .filter((value, index, self) => self.indexOf(value) === index);
 
     const coursesForStudent = deepClone(courses).filter(course =>
-      courseIdsforStudent.includes(course.id)
+      courseIdsForStudent.includes(course.id)
     );
 
-    // a student is considered to be enrolled in a course if they have taken a least one test for that course
     student.courses = [];
     // TODO: change order of courses and totalAverage
     coursesForStudent.forEach(course => {
-      course.courseAverage = calcCourseAvg(student.id, course.id, marks, tests);
+      course.courseAverage = calcCourseAvg(course.id, testsAndMarksForStudent);
       student.courses.push(course);
     });
 
