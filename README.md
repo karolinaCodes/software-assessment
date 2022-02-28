@@ -17,14 +17,13 @@ _- You can type `--help` as an argument (anywhere after "node app.js") in the co
 
 If you do not pass in the required arguments, you will see an error message in the command line similar to this:
 
-**You need to pass these following arguments:
-{path-to-courses-file} {path-to-students-file} {path-to-tests-file}
-{path-to-marks-file} {path-to-output-file} \n
-Example: “node app.js courses.csv students.csv tests.csv marks.csv output.json” \n
-Options: \n
---version Show version number [boolean] \n
---help Show help [boolean] \n
-Not enough non-option arguments: got 4, need at least 5**
+You need to pass these following arguments:
+{path-to-courses-file} {path-to-students-file} {path-to-tests-file} {path-to-marks-file} {path-to-output-file} <br>
+Example: “node app.js courses.csv students.csv tests.csv marks.csv output.json” <br>
+Options: <br>
+--version Show version number [boolean] <br>
+--help Show help [boolean] <br>
+Not enough non-option arguments: got 4, need at least 5
 
 ## Testing Instructions
 
