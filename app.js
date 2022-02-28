@@ -117,9 +117,3 @@ Promise.all([
   .catch(err => {
     console.log(err);
   });
-
-// node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
-
-// node app.js Example2/courses.csv Example2/students.csv Example2/tests.csv Example2/marks.csv output.json
-
-// node app.js Example3/courses.csv Example3/students.csv Example3/tests.csv Example3/marks.csv output.json
