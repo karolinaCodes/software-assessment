@@ -16,6 +16,7 @@ Example: “node app.js Example1/courses.csv Example1/students.csv Example1/test
 _- You can type `--help` as an argument (anywhere after "node app.js") in the command line to see these intructions again._
 
 If you do not pass in the required arguments, you will see an error message in the command line similar to this:
+
 **You need to pass these following arguments:
 {path-to-courses-file} {path-to-students-file} {path-to-tests-file}
 {path-to-marks-file} {path-to-output-file}
