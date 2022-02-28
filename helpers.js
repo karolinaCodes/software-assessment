@@ -13,21 +13,55 @@ const calcCourseAvg = (courseId, testsAndMarksForStudent) => {
     item => item.course_id === courseId
   );
 
-  // TODO: and order totalaverage and
+  // console.log(
+  //   'testsAndMarksForStudentandCourse',
+  //   testsAndMarksForStudentandCourse
+  // );
+
+  const res = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
+    return acc + +curr.weight;
+  }, 0);
+
+  // console.log(res);
+
   const courseAvg = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
+    // console.log(curr);
     return acc + curr.mark * (curr.weight / 100);
   }, 0);
 
   return +courseAvg.toFixed(2);
 };
 
-const calcTotalAverage = student =>
+const calcTotalAverage = courses =>
   +(
-    student.courses.reduce((acc, curr) => acc + +curr.courseAverage, 0) /
-    student.courses.length
+    courses.reduce((acc, curr) => acc + curr.courseAverage, 0) / courses.length
   ).toFixed(2);
 
-// TODO: test this function
+const checkSumOfCourseWeights = tests => {
+  const courseIds = tests
+    .map(test => {
+      return test.course_id;
+    })
+    .filter((value, index, self) => self.indexOf(value) === index);
+
+  let sumValidation = true;
+  courseIds.forEach(courseId => {
+    const res = tests.filter(test => {
+      return test.course_id === courseId;
+    });
+
+    const total = res.reduce((acc, curr) => {
+      return acc + +curr.weight;
+    }, 0);
+
+    if (total !== 100) {
+      sumValidation = false;
+    }
+  });
+
+  return sumValidation;
+};
+
 const parseCsvFile = async (filePath, array) => {
   return new Promise((resolve, reject) => {
     fs.createReadStream(filePath)
@@ -46,8 +80,8 @@ const parseCsvFile = async (filePath, array) => {
   });
 };
 
-const writeJSONFile = (data, filePath) => {
-  data = JSON.stringify({students: data}, null, 2);
+const writeJSONFile = (obj, filePath) => {
+  const data = JSON.stringify(obj, null, 2);
   fs.writeFile(filePath, data, err => {
     if (err) {
       throw err;
@@ -63,4 +97,5 @@ module.exports = {
   calcTotalAverage,
   parseCsvFile,
   writeJSONFile,
+  checkSumOfCourseWeights,
 };

@@ -4,6 +4,7 @@ const {
   calcTotalAverage,
   parseCsvFile,
   writeJSONFile,
+  checkSumOfCourseWeights,
 } = require('./helpers');
 
 const yargs = require('yargs/yargs');
@@ -34,22 +35,26 @@ Promise.all([
   parseCsvFile(testsFilePath, tests),
   parseCsvFile(marksFilePath, marks),
 ]).then(() => {
-  // for each student: create an object with student info and an array of courses and then each course average and finally totalAverage of all courses
+  // check if the sum of all weights of every test in a particular course should add up to 100
+  if (!checkSumOfCourseWeights(tests)) {
+    return writeJSONFile({error: 'Invalid course weights'}, outputFilePath);
+  }
+
+  // for each student object: add students' info, totalAverage of all courses, and array of courses incld. each course average.
   students.forEach(student => {
-    // for course average?
-    // use in testIdsForStudent
     const marksForStudent = deepClone(marks).filter(
       mark => mark.student_id === student.id
     );
 
-    // all tests a student completed
+    // all tests ids of test a student completed
     const testIdsForStudent = marksForStudent.map(mark => mark.test_id);
 
-    // for course average?
+    // all tests a student completed
     const testsForStudent = deepClone(tests).filter(test =>
       testIdsForStudent.includes(test.id)
     );
 
+    // merge marksForStudent and testsForStudent so test object includes mark
     const testsAndMarksForStudent = testsForStudent.map(test => {
       // find the mark for the test
       const testItem = marksForStudent.find(mark => test.id === mark.test_id);
@@ -68,21 +73,31 @@ Promise.all([
       courseIdsForStudent.includes(course.id)
     );
 
-    student.courses = [];
-    // TODO: change order of courses and totalAverage
-    coursesForStudent.forEach(course => {
+    // add courseAverage to courses
+    const completeStudentCourses = coursesForStudent.map(course => {
       course.courseAverage = calcCourseAvg(course.id, testsAndMarksForStudent);
-      student.courses.push(course);
+      return course;
     });
+    const totalAverage = calcTotalAverage(completeStudentCourses);
 
-    student.totalAverage = calcTotalAverage(student);
+    student.totalAverage = totalAverage;
+    student.courses = completeStudentCourses;
 
-    // convert student id to a number data type
+    // convert student id to number data type
     student.id = +student.id;
+
+    // convert course id to number data type
+    student.courses.forEach(course => (course.id = +course.id));
   });
-  writeJSONFile(students, outputFilePath);
+
+  // sort students by id
+  students.sort((a, b) => a.id - b.id);
+
+  writeJSONFile({students}, outputFilePath);
 });
 
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
 
 // node app.js Example2/courses.csv Example2/students.csv Example2/tests.csv Example2/marks.csv output.json
+
+// TODO: test new functions, clean up code, hand in.
