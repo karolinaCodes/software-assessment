@@ -4,6 +4,8 @@ I was not able to complete this evaluation in one sitting. I was only able to co
 
 ## Installation Instructions
 
+1. Ensure you have Node v15.14.0 installed.
+
 1. After cloning the repository, run `npm i` in the root of the repository to install dependencies.
 
 ### Using the Application:
