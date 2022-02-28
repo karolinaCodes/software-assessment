@@ -10,3 +10,5 @@ instructions on how to up the command line app- order of files and if not enough
 must run the command first-
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
 the output file must be name output.json
+
+exmaple 3 error

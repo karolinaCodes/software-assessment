@@ -1,10 +1,7 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 
-// if the object is empty because the csv parser parsed empty space, don't add to array
-const emptyObject = obj => Object.keys(obj).length === 0;
-
-// create deep clone array of objects- so don't have unwanted bugs when use array methods to create new array from array of objects
+// create deep clone of array of objects- so don't have unwanted bugs
 const deepClone = array => JSON.parse(JSON.stringify(array));
 
 const calcCourseAvg = (courseId, testsAndMarksForStudent) => {
@@ -12,13 +9,10 @@ const calcCourseAvg = (courseId, testsAndMarksForStudent) => {
     item => item.course_id === courseId
   );
 
-  const res = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
-    return acc + +curr.weight;
-  }, 0);
-
-  const courseAvg = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
-    return acc + curr.mark * (curr.weight / 100);
-  }, 0);
+  const courseAvg = testsAndMarksForStudentandCourse.reduce(
+    (acc, curr) => acc + curr.mark * (curr.weight / 100),
+    0
+  );
 
   return +courseAvg.toFixed(2);
 };
@@ -44,7 +38,9 @@ const checkCourseWeights = tests => {
   return sumValidation;
 };
 
-const parseCsvFile = async (filePath, array) => {
+const emptyObject = obj => Object.keys(obj).length === 0;
+
+const parseCSVFile = async (filePath, array) => {
   return new Promise((resolve, reject) => {
     fs.createReadStream(filePath)
       .on('error', error => {
@@ -52,6 +48,7 @@ const parseCsvFile = async (filePath, array) => {
       })
       .pipe(csv())
       .on('data', row => {
+        // if the object is empty (because the csv parser parsed an empty line), don't add to array
         if (emptyObject(row)) return;
         array.push(row);
       })
@@ -73,12 +70,32 @@ const writeJSONFile = (obj, filePath) => {
   });
 };
 
+const emptyArray = arr => arr.length === 0;
+
+const checkEmptyCSV = (courses, marks, students, tests) => {
+  let msg = '';
+  if (emptyArray(courses)) {
+    msg += 'Courses csv file is empty.';
+  }
+  if (emptyArray(marks)) {
+    msg += 'Marks csv file is empty.';
+  }
+  if (emptyArray(students)) {
+    msg += 'Students csv file is empty.';
+  }
+  if (emptyArray(tests)) {
+    msg += 'Tests csv file is empty.';
+  }
+  return msg;
+};
+
 module.exports = {
   emptyObject,
   deepClone,
   calcCourseAvg,
   calcTotalAverage,
-  parseCsvFile,
+  parseCSVFile,
   writeJSONFile,
   checkCourseWeights,
+  checkEmptyCSV,
 };

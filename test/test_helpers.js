@@ -5,7 +5,7 @@ const {
   calcCourseAvg,
   calcTotalAverage,
   checkCourseWeights,
-  parseCsvFile,
+  parseCSVFile,
   writeJSONFile,
 } = require('./../helpers');
 
@@ -137,11 +137,11 @@ describe('#checkCourseWeights()', () => {
   });
 });
 
-describe('#parseCsvFile()', () => {
+describe('#parseCSVFile()', () => {
   it('should successfully parse a csv file', async () => {
     const coursesFilePath = 'Example1/courses.csv';
     const courses = [];
-    const result = await parseCsvFile(coursesFilePath, courses);
+    const result = await parseCSVFile(coursesFilePath, courses);
     expect(result).to.equal(`"${coursesFilePath}" file parsed.`);
   });
 });
