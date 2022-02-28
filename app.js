@@ -4,7 +4,7 @@ const {
   calcTotalAverage,
   parseCsvFile,
   writeJSONFile,
-  checkSumOfCourseWeights,
+  checkCourseWeights,
 } = require('./helpers');
 
 const yargs = require('yargs/yargs');
@@ -36,7 +36,7 @@ Promise.all([
   parseCsvFile(marksFilePath, marks),
 ]).then(() => {
   // check if the sum of all weights of every test in a particular course should add up to 100
-  if (!checkSumOfCourseWeights(tests)) {
+  if (!checkCourseWeights(tests)) {
     return writeJSONFile({error: 'Invalid course weights'}, outputFilePath);
   }
 
@@ -80,15 +80,12 @@ Promise.all([
       return course;
     });
     const totalAverage = calcTotalAverage(completeStudentCourses);
-    console.log(completeStudentCourses);
 
     student.totalAverage = totalAverage;
     student.courses = completeStudentCourses;
 
-    // convert student id to number data type
+    // convert student id and course id's to number data type
     student.id = +student.id;
-
-    // convert course id to number data type
     student.courses.forEach(course => (course.id = +course.id));
   });
 
@@ -101,5 +98,3 @@ Promise.all([
 // node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json
 
 // node app.js Example2/courses.csv Example2/students.csv Example2/tests.csv Example2/marks.csv output.json
-
-// TODO: test new functions, clean up code, hand in.

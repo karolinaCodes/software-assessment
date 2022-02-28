@@ -28,26 +28,18 @@ const calcTotalAverage = courses =>
     courses.reduce((acc, curr) => acc + curr.courseAverage, 0) / courses.length
   ).toFixed(2);
 
-const checkSumOfCourseWeights = tests => {
+const checkCourseWeights = tests => {
   const courseIds = tests
-    .map(test => {
-      return test.course_id;
-    })
+    .map(test => test.course_id)
     .filter((value, index, self) => self.indexOf(value) === index);
 
   let sumValidation = true;
   courseIds.forEach(courseId => {
-    const res = tests.filter(test => {
-      return test.course_id === courseId;
-    });
+    const testsForCourse = tests.filter(test => test.course_id === courseId);
 
-    const total = res.reduce((acc, curr) => {
-      return acc + +curr.weight;
-    }, 0);
+    const sum = testsForCourse.reduce((acc, curr) => acc + +curr.weight, 0);
 
-    if (total !== 100) {
-      sumValidation = false;
-    }
+    if (sum !== 100) sumValidation = false;
   });
   return sumValidation;
 };
@@ -88,5 +80,5 @@ module.exports = {
   calcTotalAverage,
   parseCsvFile,
   writeJSONFile,
-  checkSumOfCourseWeights,
+  checkCourseWeights,
 };

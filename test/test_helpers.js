@@ -4,7 +4,7 @@ const {
   deepClone,
   calcCourseAvg,
   calcTotalAverage,
-  checkSumOfCourseWeights,
+  checkCourseWeights,
   parseCsvFile,
   writeJSONFile,
 } = require('./../helpers');
@@ -107,7 +107,7 @@ describe('#calcTotalAverage()', () => {
   });
 });
 
-describe('#checkSumOfCourseWeights()', () => {
+describe('#checkCourseWeights()', () => {
   it('should return true if the course weights for each courses add up to 100', () => {
     const tests = [
       {id: '1', course_id: '1', weight: '10'},
@@ -118,7 +118,7 @@ describe('#checkSumOfCourseWeights()', () => {
       {id: '6', course_id: '3', weight: '90'},
       {id: '7', course_id: '3', weight: '10'},
     ];
-    const result = checkSumOfCourseWeights(tests);
+    const result = checkCourseWeights(tests);
     expect(result).to.equal(true);
   });
 
@@ -132,7 +132,7 @@ describe('#checkSumOfCourseWeights()', () => {
       {id: '6', course_id: '3', weight: '90'},
       {id: '7', course_id: '3', weight: '10'},
     ];
-    const result = checkSumOfCourseWeights(tests);
+    const result = checkCourseWeights(tests);
     expect(result).to.equal(false);
   });
 });
