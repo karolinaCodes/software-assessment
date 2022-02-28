@@ -63,7 +63,6 @@ const writeJSONFile = (obj, filePath) => {
   const data = JSON.stringify(obj, null, 2);
   fs.writeFile(filePath, data, err => {
     if (err) {
-      success = false;
       throw err;
     }
     console.log('JSON data is saved.');
@@ -72,21 +71,21 @@ const writeJSONFile = (obj, filePath) => {
 
 const emptyArray = arr => arr.length === 0;
 
-const checkEmptyCSV = (courses, marks, students, tests) => {
-  let msg = '';
+const checkEmptyCSVFile = (courses, marks, students, tests) => {
+  let errorMsg = '';
   if (emptyArray(courses)) {
-    msg += 'Courses csv file is empty.';
+    errorMsg += 'Courses csv file is empty.';
   }
   if (emptyArray(marks)) {
-    msg += 'Marks csv file is empty.';
+    errorMsg += 'Marks csv file is empty.';
   }
   if (emptyArray(students)) {
-    msg += 'Students csv file is empty.';
+    errorMsg += 'Students csv file is empty.';
   }
   if (emptyArray(tests)) {
-    msg += 'Tests csv file is empty.';
+    errorMsg += 'Tests csv file is empty.';
   }
-  return msg;
+  return errorMsg;
 };
 
 module.exports = {
@@ -97,5 +96,6 @@ module.exports = {
   parseCSVFile,
   writeJSONFile,
   checkCourseWeights,
-  checkEmptyCSV,
+  checkEmptyCSVFile,
+  emptyArray,
 };

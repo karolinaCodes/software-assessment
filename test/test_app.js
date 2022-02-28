@@ -74,7 +74,14 @@ describe('Report card CLI app', () => {
     expect(parsedData.error).to.equal('Invalid course weights');
   });
 
+  it('should return a JSON object with an error message if CSV file is empty', () => {
+    execSync(
+      'node app.js Example4/courses.csv Example4/students.csv Example4/tests.csv Example4/marks.csv output.json'
+    );
+    const data = fs.readFileSync('output.json', {encoding: 'utf8'});
+    parsedData = JSON.parse(data);
+    expect(parsedData.error).to.equal('Courses csv file is empty.');
+  });
+
   after(() => fs.unlinkSync('output.json'));
 });
-
-// create files for function or for all functions

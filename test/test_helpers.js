@@ -7,6 +7,8 @@ const {
   checkCourseWeights,
   parseCSVFile,
   writeJSONFile,
+  checkEmptyCSVFile,
+  emptyArray,
 } = require('./../helpers');
 
 describe('#emptyObject()', () => {
@@ -174,5 +176,59 @@ describe('#writeJSONFile()', () => {
     const filePath = 'output.json';
     const result = writeJSONFile(obj, filePath);
     expect(!result).to.equal(true);
+  });
+});
+
+describe('#emptyArray()', () => {
+  it('should true if array is empty', () => {
+    const result = emptyArray([]);
+    expect(result).to.equal(true);
+  });
+
+  it('should false if array is empty', () => {
+    const result = emptyArray([1, 2, 3]);
+    expect(result).to.equal(false);
+  });
+});
+
+describe('#checkEmptyCSVFile()', () => {
+  it('should return an error message if CSV file is empty', () => {
+    const courses = [];
+    const marks = [
+      {test_id: '4', student_id: '5', mark: '32'},
+      {test_id: '5', student_id: '5', mark: '65'},
+      {test_id: '1', student_id: '5', mark: '13'},
+    ];
+    const students = [{id: '5', name: 'D'}];
+    const tests = [
+      {id: '1', course_id: '1', weight: '10'},
+      {id: '2', course_id: '1', weight: '40'},
+      {id: '3', course_id: '1', weight: '50'},
+      {id: '4', course_id: '2', weight: '40'},
+      {id: '5', course_id: '2', weight: '60'},
+    ];
+    const result = checkEmptyCSVFile(courses, marks, students, tests);
+    expect(result).to.equal('Courses csv file is empty.');
+  });
+  it('should return an empty string if CSV file is not empty', () => {
+    const courses = [
+      {id: '1', name: 'Biology', teacher: 'Mr. D'},
+      {id: '2', name: 'History', teacher: ' Mrs. P'},
+    ];
+    const marks = [
+      {test_id: '4', student_id: '5', mark: '32'},
+      {test_id: '5', student_id: '5', mark: '65'},
+      {test_id: '1', student_id: '5', mark: '13'},
+    ];
+    const students = [{id: '5', name: 'D'}];
+    const tests = [
+      {id: '1', course_id: '1', weight: '10'},
+      {id: '2', course_id: '1', weight: '40'},
+      {id: '3', course_id: '1', weight: '50'},
+      {id: '4', course_id: '2', weight: '40'},
+      {id: '5', course_id: '2', weight: '60'},
+    ];
+    const result = checkEmptyCSVFile(courses, marks, students, tests);
+    expect(result).to.equal('');
   });
 });

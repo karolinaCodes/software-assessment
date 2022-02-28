@@ -5,7 +5,7 @@ const {
   parseCSVFile,
   writeJSONFile,
   checkCourseWeights,
-  checkEmptyCSV,
+  checkEmptyCSVFile,
 } = require('./helpers');
 
 const yargs = require('yargs/yargs');
@@ -37,6 +37,13 @@ Promise.all([
   parseCSVFile(marksFilePath, marks),
 ])
   .then(() => {
+    console.log(marks);
+    console.log(courses);
+
+    console.log(students);
+
+    console.log(tests);
+
     // Error handling //
 
     // check if the sum of course weights for all courses add up to 100
@@ -45,7 +52,7 @@ Promise.all([
     }
 
     // check if any CSV file is empty
-    const isEmpty = checkEmptyCSV(courses, marks, students, tests);
+    const isEmpty = checkEmptyCSVFile(courses, marks, students, tests);
     if (isEmpty) {
       return writeJSONFile({error: isEmpty}, outputFilePath);
     }
