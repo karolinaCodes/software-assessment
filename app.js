@@ -76,9 +76,11 @@ Promise.all([
     // add courseAverage to courses
     const completeStudentCourses = coursesForStudent.map(course => {
       course.courseAverage = calcCourseAvg(course.id, testsAndMarksForStudent);
+      // console.log('one', testsAndMarksForStudent);
       return course;
     });
     const totalAverage = calcTotalAverage(completeStudentCourses);
+    console.log(completeStudentCourses);
 
     student.totalAverage = totalAverage;
     student.courses = completeStudentCourses;

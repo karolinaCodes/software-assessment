@@ -7,25 +7,16 @@ const emptyObject = obj => Object.keys(obj).length === 0;
 // create deep clone array of objects- so don't have unwanted bugs when use array methods to create new array from array of objects
 const deepClone = array => JSON.parse(JSON.stringify(array));
 
-// course average
 const calcCourseAvg = (courseId, testsAndMarksForStudent) => {
   const testsAndMarksForStudentandCourse = testsAndMarksForStudent.filter(
     item => item.course_id === courseId
   );
 
-  // console.log(
-  //   'testsAndMarksForStudentandCourse',
-  //   testsAndMarksForStudentandCourse
-  // );
-
   const res = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
     return acc + +curr.weight;
   }, 0);
 
-  // console.log(res);
-
   const courseAvg = testsAndMarksForStudentandCourse.reduce((acc, curr) => {
-    // console.log(curr);
     return acc + curr.mark * (curr.weight / 100);
   }, 0);
 
