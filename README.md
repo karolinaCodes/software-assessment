@@ -17,7 +17,7 @@ _- You can type `--help` as an argument (anywhere after "node app.js") in the co
 
 If you do not pass in the required arguments, you will see an error message in the command line similar to this:
 
-**"You need to pass these following arguments:
+** "You need to pass these following arguments:
 {path-to-courses-file} {path-to-students-file} {path-to-tests-file}
 {path-to-marks-file} {path-to-output-file}
 Example: “node app.js courses.csv students.csv tests.csv marks.csv output.json”
@@ -26,7 +26,7 @@ Options:
 --version Show version number [boolean]
 --help Show help [boolean]
 
-Not enough non-option arguments: got 4, need at least 5"**
+Not enough non-option arguments: got 4, need at least 5" **
 
 ## Testing Instructions
 
