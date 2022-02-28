@@ -1,17 +1,17 @@
 const expect = require('chai').expect;
 const fs = require('fs');
+const {execSync} = require('child_process');
 
 describe('Report card CLI app', () => {
   let parsedData;
 
-  beforeEach(() => {
+  before(() => {
+    execSync(
+      'node app.js Example1/courses.csv Example1/students.csv Example1/tests.csv Example1/marks.csv output.json'
+    );
     const data = fs.readFileSync('output.json', {encoding: 'utf8'});
     parsedData = JSON.parse(data);
   });
-
-  it.skip('should return an error message when no arguments are passed to the command line', () => {});
-
-  it.skip('should return an error message when not enough arguments are passed to the command line', () => {});
 
   it('data should be contained within an object with a “students” key', () => {
     expect(parsedData).to.have.property('students');
@@ -64,6 +64,17 @@ describe('Report card CLI app', () => {
     const result = isJsonObject(parsedData);
     expect(result).to.equal(true);
   });
+
+  it('should return an error object with relevant message if the course weights for each course don"t total 100', () => {
+    execSync(
+      'node app.js Example3/courses.csv Example3/students.csv Example3/tests.csv Example3/marks.csv output.json'
+    );
+    const data = fs.readFileSync('output.json', {encoding: 'utf8'});
+    parsedData = JSON.parse(data);
+    expect(parsedData.error).to.equal('Invalid course weights');
+  });
+
+  after(() => fs.unlinkSync('output.json'));
 });
 
 // create files for function or for all functions

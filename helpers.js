@@ -49,7 +49,6 @@ const checkSumOfCourseWeights = tests => {
       sumValidation = false;
     }
   });
-
   return sumValidation;
 };
 
@@ -66,7 +65,7 @@ const parseCsvFile = async (filePath, array) => {
       })
       .on('end', () => {
         console.log(`"${filePath}" file parsed.`);
-        resolve();
+        resolve(`"${filePath}" file parsed.`);
       });
   });
 };
@@ -75,6 +74,7 @@ const writeJSONFile = (obj, filePath) => {
   const data = JSON.stringify(obj, null, 2);
   fs.writeFile(filePath, data, err => {
     if (err) {
+      success = false;
       throw err;
     }
     console.log('JSON data is saved.');

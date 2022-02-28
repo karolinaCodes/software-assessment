@@ -4,9 +4,12 @@ const {
   deepClone,
   calcCourseAvg,
   calcTotalAverage,
+  checkSumOfCourseWeights,
+  parseCsvFile,
+  writeJSONFile,
 } = require('./../helpers');
 
-describe('emptyObject()', () => {
+describe('#emptyObject()', () => {
   it('should true if object has no properties', () => {
     const result = emptyObject({});
     expect(result).to.equal(true);
@@ -17,14 +20,16 @@ describe('emptyObject()', () => {
   });
 });
 
-describe('deepClone()', () => {
-  it.skip('should return deep clone array of objects', () => {
+describe('#deepClone()', () => {
+  it('should return deep clone array of objects', () => {
     const obj = {a: [1, 2], b: [3, 4]};
     const result = deepClone(obj);
     let clone = true;
     for (const key in obj) {
-      if (obj[key] !== result[key]) {
-        clone = false;
+      for (let i = 0; i < obj[key].length; i++) {
+        if (obj[key][i] !== result[key][i]) {
+          clone = false;
+        }
       }
     }
     const isClone = clone && obj !== result;
@@ -99,5 +104,75 @@ describe('#calcTotalAverage()', () => {
     ];
     const result = calcTotalAverage(completeStudentCourses);
     expect(result).to.equal(60.7);
+  });
+});
+
+describe('#checkSumOfCourseWeights()', () => {
+  it('should return true if the course weights for each courses add up to 100', () => {
+    const tests = [
+      {id: '1', course_id: '1', weight: '10'},
+      {id: '2', course_id: '1', weight: '40'},
+      {id: '3', course_id: '1', weight: '50'},
+      {id: '4', course_id: '2', weight: '40'},
+      {id: '5', course_id: '2', weight: '60'},
+      {id: '6', course_id: '3', weight: '90'},
+      {id: '7', course_id: '3', weight: '10'},
+    ];
+    const result = checkSumOfCourseWeights(tests);
+    expect(result).to.equal(true);
+  });
+
+  it('should return false if the course weights for each courses don"t add up to 100', () => {
+    const tests = [
+      {id: '1', course_id: '1', weight: '10'},
+      {id: '2', course_id: '1', weight: '10'},
+      {id: '3', course_id: '1', weight: '50'},
+      {id: '4', course_id: '2', weight: '40'},
+      {id: '5', course_id: '2', weight: '60'},
+      {id: '6', course_id: '3', weight: '90'},
+      {id: '7', course_id: '3', weight: '10'},
+    ];
+    const result = checkSumOfCourseWeights(tests);
+    expect(result).to.equal(false);
+  });
+});
+
+describe('#parseCsvFile()', () => {
+  it('should successfully parse a csv file', async () => {
+    const coursesFilePath = 'Example1/courses.csv';
+    const courses = [];
+    const result = await parseCsvFile(coursesFilePath, courses);
+    expect(result).to.equal(`"${coursesFilePath}" file parsed.`);
+  });
+});
+
+describe('#writeJSONFile()', () => {
+  it('should successfully write a JSON file', async () => {
+    const obj = {
+      students: [
+        {
+          id: 5,
+          name: 'D',
+          totalAverage: 26.55,
+          courses: [
+            {
+              id: 1,
+              name: 'Biology',
+              teacher: 'Mr. D',
+              courseAverage: 1.3,
+            },
+            {
+              id: 2,
+              name: 'History',
+              teacher: ' Mrs. P',
+              courseAverage: 51.8,
+            },
+          ],
+        },
+      ],
+    };
+    const filePath = 'output.json';
+    const result = writeJSONFile(obj, filePath);
+    expect(!result).to.equal(true);
   });
 });
