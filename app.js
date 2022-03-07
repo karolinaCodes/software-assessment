@@ -37,13 +37,6 @@ Promise.all([
   parseCSVFile(marksFilePath, marks),
 ])
   .then(() => {
-    console.log(marks);
-    console.log(courses);
-
-    console.log(students);
-
-    console.log(tests);
-
     // Error handling //
 
     // check if the sum of course weights for all courses add up to 100
