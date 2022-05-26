@@ -1,7 +1,3 @@
-## Notes for Evaluator
-
-I was not able to complete this evaluation in one sitting. I was only able to complete it piecemeal as I have other obligations such as an internship and other assessments I had to complete. In addition, this assessment was to be completed for a certain job requisition that has now been closed and so I stopped working on this assessment when I found out about this but then decided to complete it and submit it anyways.
-
 ## Installation Instructions
 
 1. Ensure you have Node v15.14.0 installed.
